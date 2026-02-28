@@ -1,0 +1,50 @@
+# ══════════════════════════════════════════════════════════════
+# .gitignore — INPI Vigilancia de Marcas
+# ══════════════════════════════════════════════════════════════
+
+# ── CREDENCIALES (nunca subir) ────────────────────────────────
+.env
+.env.local
+.env.production
+.env.staging
+backend/.env
+
+# ── Mantener el ejemplo
+!backend/.env.example
+
+# ── ARCHIVOS GENERADOS POR EL SISTEMA ────────────────────────
+*.log
+boletin_cache.json
+alertas_*.json
+*_metadata.json
+marcas_clientes.csv
+
+# ── REPORTES LOCALES (van a GitHub vía github_uploader.py) ───
+# Comentar esta línea si querés versionar los reportes también localmente
+reporte_alertas_*.txt
+
+# ── PYTHON ───────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# ── PLAYWRIGHT ───────────────────────────────────────────────
+playwright/.auth/
+
+# ── SISTEMA OPERATIVO ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── EDITORES ─────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo

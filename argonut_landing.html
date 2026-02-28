@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Argonut — Vigilancia de Marcas INPI Argentina</title>
+  <style>
+    :root {
+      --brand:     #0f172a;
+      --accent:    #e63946;
+      --accent2:   #f4a261;
+      --light:     #f8fafc;
+      --muted:     #64748b;
+      --border:    #e2e8f0;
+      --radius:    12px;
+      --font:      'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--light);
+      color: var(--brand);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--brand);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--accent); }
+    .nav-pill {
+      background: var(--accent);
+      color: #fff;
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--brand) 0%, #1e293b 100%);
+      color: #fff;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(230, 57, 70, 0.2);
+      border: 1px solid rgba(230, 57, 70, 0.5);
+      color: #fca5a5;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+      letter-spacing: -1px;
+    }
+    .hero h1 em { color: var(--accent); font-style: normal; }
+    .hero p {
+      max-width: 620px;
+      margin: 0 auto 2.2rem;
+      font-size: 1.1rem;
+      color: #cbd5e1;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.85rem 2rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(230,57,70,0.35);
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(230,57,70,0.45); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      gap: 0;
+    }
+    .stat {
+      flex: 1;
+      max-width: 220px;
+      text-align: center;
+      padding: 1.6rem 1rem;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── SECTION ── */
+    section { padding: 4rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    h2 {
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
+    }
+    .section-lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 640px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── PROBLEMA / SOLUCIÓN ── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .problem-card {
+      background: #fff1f2;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius);
+      padding: 1.4rem;
+    }
+    .problem-card .icon { font-size: 1.5rem; margin-bottom: 0.6rem; }
+    .problem-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .problem-card p { font-size: 0.9rem; color: #6b0f1a; }
+
+    /* ── CÓMO FUNCIONA ── */
+    .how-section { background: var(--brand); color: #fff; padding: 4rem 2rem; }
+    .how-inner { max-width: 1100px; margin: 0 auto; }
+    .how-section .section-lead { color: #94a3b8; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .step {
+      position: relative;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 1.6rem 1.4rem;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .step p { font-size: 0.88rem; color: #94a3b8; }
+
+    /* ── FEATURES ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.4rem;
+    }
+    .feature-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.6rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+    .feature-icon {
+      width: 44px; height: 44px;
+      background: #fff1f2;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.88rem; color: var(--muted); }
+
+    /* ── ALERTA EJEMPLO ── */
+    .alert-demo {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-width: 680px;
+      margin: 0 auto;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+    .alert-demo-header {
+      background: var(--brand);
+      color: #fff;
+      padding: 1rem 1.4rem;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .alert-demo-header span { color: #94a3b8; font-size: 0.78rem; }
+    .alert-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.2rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .alert-row:last-child { border-bottom: none; }
+    .alert-score {
+      font-size: 1.2rem;
+      font-weight: 800;
+      min-width: 52px;
+      text-align: center;
+      padding: 0.25rem 0.6rem;
+      border-radius: 8px;
+    }
+    .score-red { background: #fef2f2; color: #dc2626; }
+    .score-yellow { background: #fffbeb; color: #d97706; }
+    .score-orange { background: #fff7ed; color: #ea580c; }
+    .alert-info h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .alert-info p { font-size: 0.82rem; color: var(--muted); }
+    .alert-info .exp { color: var(--accent); font-weight: 600; }
+
+    /* ── PRECIO ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.4rem;
+      margin-top: 2.5rem;
+    }
+    .plan {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.6rem;
+      position: relative;
+    }
+    .plan.featured {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(230,57,70,0.08);
+    }
+    .plan-badge {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.9rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .plan-name { font-size: 1rem; font-weight: 700; color: var(--muted); margin-bottom: 0.5rem; }
+    .plan-price {
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .plan-price sup { font-size: 1.2rem; vertical-align: super; }
+    .plan-period { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; }
+    .plan-features { list-style: none; margin-bottom: 1.6rem; }
+    .plan-features li {
+      font-size: 0.88rem;
+      padding: 0.35rem 0;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .plan-features li::before { content: "✓"; color: var(--accent); font-weight: 700; }
+    .plan-btn {
+      display: block;
+      text-align: center;
+      padding: 0.75rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .plan-btn:hover { opacity: 0.85; }
+    .plan-btn.primary { background: var(--accent); color: #fff; }
+    .plan-btn.secondary { background: var(--brand); color: #fff; }
+    .plan-btn.outline { border: 2px solid var(--brand); color: var(--brand); }
+
+    /* ── LEGAL ── */
+    .legal-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: var(--radius);
+      padding: 1.4rem 1.6rem;
+      font-size: 0.88rem;
+      color: #92400e;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .legal-box strong { display: block; margin-bottom: 0.4rem; }
+
+    /* ── ONBOARDING / FORM ── */
+    .form-section {
+      background: var(--brand);
+      color: #fff;
+      padding: 4rem 2rem;
+    }
+    .form-inner { max-width: 640px; margin: 0 auto; }
+    .form-inner .section-tag { color: #fca5a5; }
+    .form-inner h2 { color: #fff; margin-bottom: 0.5rem; }
+    .form-inner .section-lead { color: #94a3b8; }
+
+    .form-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-top: 1.5rem;
+    }
+    .form-group { margin-bottom: 1.2rem; }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.95rem;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input::placeholder, textarea::placeholder { color: #475569; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    select option { background: #1e293b; color: #fff; }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.9rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: opacity 0.15s, transform 0.15s;
+      font-family: var(--font);
+    }
+    .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0f172a;
+      color: #475569;
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.82rem;
+    }
+    footer a { color: #64748b; text-decoration: none; }
+    footer a:hover { color: #94a3b8; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .stats-bar { flex-wrap: wrap; }
+      .stat { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Argo<span>nut</span></div>
+  <a href="#onboarding" class="nav-pill">Quiero vigilar mi marca →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🔒 Acceso Early Access · Friends &amp; Family</div>
+  <h1>Tu marca registrada,<br><em>vigilada cada semana</em></h1>
+  <p>Argonut monitorea el Boletín del INPI y te alerta automáticamente cuando alguien intenta registrar una marca que colisione con la tuya. Antes de que sea tarde.</p>
+  <a href="#onboarding" class="hero-cta">
+    Empezar ahora — es gratis para vos
+  </a>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">30</div>
+    <div class="stat-label">días hábiles para oponerse</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">75%+</div>
+    <div class="stat-label">similitud mínima detectada</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">marcas por cliente</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">Lunes</div>
+    <div class="stat-label">reporte semanal automático</div>
+  </div>
+</div>
+
+<!-- PROBLEMA -->
+<section>
+  <div class="section-tag">El problema real</div>
+  <h2>El INPI publica el Boletín. Nadie lo lee.</h2>
+  <p class="section-lead">
+    Cada semana aparecen cientos de nuevas solicitudes de marcas en Argentina. Una sola solicitud de un competidor oportunista puede amenazar años de construcción de marca — y tenés solo 30 días hábiles para actuar.
+  </p>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="icon">😴</div>
+      <h3>Nadie monitorea manualmente</h3>
+      <p>Buscar en portaltramites.inpi.gob.ar clase por clase, semana a semana, es humanamente imposible sin un sistema dedicado.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">⏰</div>
+      <h3>El plazo es implacable</h3>
+      <p>30 días hábiles desde la publicación. Después de ese plazo, la oposición no procede y la marca puede quedar en manos de un tercero.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🎯</div>
+      <h3>El squatting de marcas existe</h3>
+      <p>Particulares registran marcas ajenas para después venderlas, licenciarlas o bloquear al titular original. No es un riesgo teórico.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<div class="how-section">
+  <div class="how-inner">
+    <div class="section-tag">Cómo funciona</div>
+    <h2>Automático. Cada semana. Sin intervención.</h2>
+    <p class="section-lead">Argonut corre todos los lunes a las 8 AM. Si detecta una nueva solicitud que se parece a tu marca, te avisa ese mismo día.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Cargás tu marca</h3>
+        <p>Nombre, clase INPI, titular y email de contacto. Se tarda 2 minutos.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Argonut escanea el INPI</h3>
+        <p>Nuestro motor analiza todas las solicitudes del boletín usando algoritmos de similitud fonética y ortográfica.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Detecta colisiones</h3>
+        <p>Marcas idénticas, casi idénticas, o con variantes fonéticas. Score de similitud del 75% al 100%.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Te alertamos</h3>
+        <p>Email con el expediente, fecha, titular solicitante y nivel de urgencia. Vos decidís si activar una oposición.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <h3>Sin duplicados</h3>
+        <p>El sistema recuerda qué expedientes ya te notificó. Solo recibirás alertas de solicitudes genuinamente nuevas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section>
+  <div class="section-tag">Funcionalidades</div>
+  <h2>Todo lo que necesitás para proteger tus marcas</h2>
+  <p class="section-lead">Motor de detección construido sobre múltiples algoritmos de similitud para maximizar la detección y minimizar el ruido.</p>
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>Detección fonética y ortográfica</h3>
+      <p>Algoritmos de ratio, partial ratio, token_sort y token_set. Detecta "MERCADOLIBRE SHOP", "NARANJAX", "LA PATAGÓNICA" — no solo copias exactas.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎛️</div>
+      <h3>Umbral configurable</h3>
+      <p>75% para uso general. 90%+ para carteras de alto volumen. Ajustable por cliente según el sector y el nivel de riesgo.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📧</div>
+      <h3>Alertas por email</h3>
+      <p>Reporte HTML con tabla de colisiones, score de similitud, expediente y datos del solicitante. Listo para enviarlo al estudio jurídico.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <h3>Deduplicación inteligente</h3>
+      <p>Historial persistente de expedientes procesados. El mismo expediente nunca genera dos alertas. Solo novedades reales.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Priorización de riesgos</h3>
+      <p>🔴 Crítico (90%+) · 🟡 Alto (80-89%) · 🟠 Medio (75-79%). Sabés en qué caso enfocarte primero.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏛️</div>
+      <h3>Marco legal integrado</h3>
+      <p>Reporte con referencia directa a Ley 22.362 Art. 12, plazos de oposición y acceso directo al portal del INPI.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EJEMPLO DE ALERTA -->
+<section>
+  <div class="section-tag">Ejemplo real</div>
+  <h2>Así se ve una alerta de Argonut</h2>
+  <p class="section-lead">Este es el formato del email que llega todos los lunes. Diseñado para que un abogado lo entienda en 10 segundos.</p>
+  <div class="alert-demo">
+    <div class="alert-demo-header">
+      📧 Asunto: <strong>🚨 INPI Monitor — 3 alerta(s) nueva(s) (2 críticas)</strong>
+      <span style="margin-left:auto;">lun 24/02/2026 08:04</span>
+    </div>
+    <div class="alert-row">
+      <div class="alert-score score-red">100%</div>
+      <div class="alert-info">
+        <h4>MERCADOLIBRE · Clase 35</h4>
+        <p>Nueva solicitud: <strong>MERCADOLIBRE SHOP</strong> · Solicitante: Competidor SRL</p>
+        <p><span class="exp">Nº 4.123.457</span> · 24/02/2026 · 🔴 CRÍTICA — acción en 30 días hábiles</p>
+      </div>
+    </div>
+    <div class="alert-row">
+      <div class="alert-score score-red">97%</div>
+      <div class="alert-info">
+        <h4>INFLUENCER EJEMPLO · Clase 41</h4>
+        <p>Nueva solicitud: <strong>INFLUENCER EJMPLO</strong> · Solicitante: Squatter Digital</p>
+        <p><span class="exp">Nº 4.123.461</span> · 24/02/2026 · 🔴 CRÍTICA</p>
+      </div>
+    </div>
+    <div class="alert-row">
+      <div class="alert-score score-yellow">94%</div>
+      <div class="alert-info">
+        <h4>NARANJA X · Clase 36</h4>
+        <p>Nueva solicitud: <strong>NARANJAX</strong> · Solicitante: Fintech Paralela SA</p>
+        <p><span class="exp">Nº 4.123.458</span> · 24/02/2026 · 🟡 ALTA</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANES -->
+<section>
+  <div class="section-tag">Planes — Early Access F&amp;F</div>
+  <h2>Precio especial para quienes entran primero</h2>
+  <p class="section-lead">Estamos en fase Friends &amp; Family. Cero compromiso, cero costo. A cambio, tu feedback es el producto.</p>
+  <div class="pricing-grid">
+    <div class="plan">
+      <div class="plan-name">Básico</div>
+      <div class="plan-price"><sup>$</sup>0</div>
+      <div class="plan-period">durante el período F&amp;F</div>
+      <ul class="plan-features">
+        <li>Hasta 3 marcas monitoreadas</li>
+        <li>1 clase INPI por marca</li>
+        <li>Alerta semanal por email</li>
+        <li>Reporte texto plano</li>
+        <li>Deduplicación incluida</li>
+      </ul>
+      <a href="#onboarding" class="plan-btn outline">Empezar gratis</a>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">Recomendado para estudios</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price"><sup>$</sup>0</div>
+      <div class="plan-period">durante el período F&amp;F</div>
+      <ul class="plan-features">
+        <li>Marcas ilimitadas</li>
+        <li>Múltiples clases por marca</li>
+        <li>Email HTML + WhatsApp</li>
+        <li>Umbral personalizado</li>
+        <li>Historial de alertas en JSON</li>
+        <li>Soporte directo por WhatsApp</li>
+      </ul>
+      <a href="#onboarding" class="plan-btn primary">Quiero el plan Pro</a>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Estudio</div>
+      <div class="plan-price">A consultar</div>
+      <div class="plan-period">multi-cliente, white-label</div>
+      <ul class="plan-features">
+        <li>Cartera de clientes completa</li>
+        <li>Dashboard propio (próximo)</li>
+        <li>Integración con tu estudio</li>
+        <li>Personalización de reportes</li>
+        <li>Soporte prioritario</li>
+      </ul>
+      <a href="mailto:argonut@ejemplo.com" class="plan-btn secondary">Contactar</a>
+    </div>
+  </div>
+</section>
+
+<!-- AVISO LEGAL -->
+<section style="padding-top: 0;">
+  <div class="legal-box">
+    <strong>⚖️ Importante — Límite del servicio</strong>
+    Argonut es una herramienta de detección temprana, no un servicio jurídico. Las alertas generadas no constituyen dictamen legal ni garantizan que una solicitud sea efectivamente confundible. Toda decisión sobre interponer oposición requiere análisis profesional bajo la Ley 22.362 y el criterio del titular o su apoderado. Verificar siempre en portaltramites.inpi.gob.ar.
+  </div>
+</section>
+
+<!-- ONBOARDING FORM -->
+<div class="form-section" id="onboarding">
+  <div class="form-inner">
+    <div class="section-tag">Onboarding</div>
+    <h2>Cargá tu marca ahora</h2>
+    <p class="section-lead">Completá este formulario y en las próximas 48 hs tu marca queda monitoreada. Sin contratos, sin tarjeta.</p>
+
+    <div class="form-card">
+      <form onsubmit="handleSubmit(event)">
+
+        <div class="form-group">
+          <label>Nombre completo / Estudio</label>
+          <input type="text" placeholder="Ej: María García · Estudio García & Asociados" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="vos@ejemplo.com" required />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp (opcional)</label>
+            <input type="tel" placeholder="+54 9 351 000 0000" />
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:1.2rem 0;" />
+
+        <div class="form-group">
+          <label>Nombre de la marca a vigilar</label>
+          <input type="text" placeholder="Ej: NARANJA X" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Clase INPI</label>
+            <select required>
+              <option value="" disabled selected>Seleccionar clase</option>
+              <option value="35">Clase 35 — Publicidad / E-commerce</option>
+              <option value="36">Clase 36 — Finanzas / Seguros</option>
+              <option value="38">Clase 38 — Telecomunicaciones</option>
+              <option value="41">Clase 41 — Educación / Contenido</option>
+              <option value="42">Clase 42 — Tecnología / Software</option>
+              <option value="43">Clase 43 — Gastronomía</option>
+              <option value="44">Clase 44 — Salud</option>
+              <option value="45">Clase 45 — Legal / Seguridad</option>
+              <option value="otro">Otra clase (indicar en notas)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Titular registral</label>
+            <input type="text" placeholder="Ej: Naranja X SA" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Notas adicionales (opcional)</label>
+          <textarea placeholder="Ej: También monitorear variantes con SHOP, PAY, GO. Alta prioridad fintech."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          Activar vigilancia → sin costo
+        </button>
+
+        <p style="text-align:center;font-size:0.78rem;color:#475569;margin-top:0.8rem;">
+          Al enviar, aceptás que tus datos se usen únicamente para configurar el monitoreo.
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p style="margin-bottom:0.4rem;">
+    <strong style="color:#94a3b8;">Argonut</strong> — Sistema de Vigilancia de Marcas · INPI Argentina
+  </p>
+  <p>
+    Ley 22.362 · <a href="https://portaltramites.inpi.gob.ar" target="_blank">portaltramites.inpi.gob.ar</a>
+    · Córdoba, Argentina
+  </p>
+  <p style="margin-top:0.8rem;font-size:0.75rem;">
+    Este sistema es una herramienta de detección temprana. No reemplaza el asesoramiento jurídico profesional.
+  </p>
+</footer>
+
+<script>
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Form handler — en F&F esto puede ser un mailto o un Google Form embed
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.submit-btn');
+    btn.textContent = '✅ ¡Recibido! Te contactamos en 48 hs.';
+    btn.style.background = '#16a34a';
+    btn.disabled = true;
+
+    // TODO: reemplazar con envío real a tu backend / Google Sheets / Notion
+    // Opciones F&F:
+    //   1. mailto: con los datos del form
+    //   2. Fetch a un Google Apps Script endpoint
+    //   3. Formspree.io (free tier)
+    console.log('Form submitted — conectar con backend F&F');
+  }
+</script>
+
+</body>
+</html>

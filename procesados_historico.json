@@ -1,0 +1,40 @@
+{
+  "ultima_actualizacion": "2026-02-26T17:28:01.722166",
+  "expedientes_procesados": {
+    "Nº 4.123.457": {
+      "primera_deteccion": "2026-02-26",
+      "alerta_enviada": true,
+      "score_maximo": 100,
+      "marca_colisionada": "MERCADOLIBRE",
+      "solicitud": "MERCADOLIBRE SHOP"
+    },
+    "Nº 4.123.461": {
+      "primera_deteccion": "2026-02-26",
+      "alerta_enviada": true,
+      "score_maximo": 97,
+      "marca_colisionada": "INFLUENCER EJEMPLO",
+      "solicitud": "INFLUENCER EJMPLO"
+    },
+    "Nº 4.123.456": {
+      "primera_deteccion": "2026-02-26",
+      "alerta_enviada": true,
+      "score_maximo": 96,
+      "marca_colisionada": "MERCADOLIBRE",
+      "solicitud": "MERCADO LIBRE"
+    },
+    "Nº 4.123.459": {
+      "primera_deteccion": "2026-02-26",
+      "alerta_enviada": true,
+      "score_maximo": 96,
+      "marca_colisionada": "LA PATAGONIA",
+      "solicitud": "LA PATAGÓNICA"
+    },
+    "Nº 4.123.458": {
+      "primera_deteccion": "2026-02-26",
+      "alerta_enviada": true,
+      "score_maximo": 94,
+      "marca_colisionada": "NARANJA X",
+      "solicitud": "NARANJAX"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "nombre": "MERCADOLIBRE",
+    "clase": 35,
+    "titular": "MercadoLibre SRL",
+    "contacto": "legal@example.com",
+    "notas": "Monitorear variantes fonéticas y combinaciones con SHOP, PAY, etc."
+  },
+  {
+    "nombre": "NARANJA X",
+    "clase": 36,
+    "titular": "Naranja X SA",
+    "contacto": "marcas@example.com",
+    "notas": "Fintech, alta prioridad squatting especulativo"
+  },
+  {
+    "nombre": "LA PATAGONIA",
+    "clase": 43,
+    "titular": "Gastronomía del Sur SRL",
+    "contacto": "info@example.com",
+    "notas": "Gastronomía, zona Córdoba. Vigilar tildes y variantes regionales."
+  },
+  {
+    "nombre": "INFLUENCER EJEMPLO",
+    "clase": 41,
+    "titular": "Persona Física",
+    "contacto": "agente@example.com",
+    "notas": "Marca personal. Contenido digital, cursos, merch."
+  }
+]

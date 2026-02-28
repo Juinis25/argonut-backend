@@ -1,0 +1,43 @@
+# ══════════════════════════════════════════════════════════════════
+# INPI ARGENTINA — Vigilancia de Marcas
+# requirements.txt — Dependencias de Producción
+# ══════════════════════════════════════════════════════════════════
+
+# ── Scraping y automatización de navegador
+playwright==1.44.0
+beautifulsoup4==4.12.3
+lxml==5.2.2                    # Parser XML/HTML más rápido para BS4
+requests==2.32.3
+urllib3==2.2.1
+
+# ── Detección de similitud fonética / ortográfica
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.25.1     # Acelera fuzzywuzzy ~10x
+
+# ── Procesamiento de PDF del Boletín INPI
+PyPDF2==3.0.1
+pdfplumber==0.11.0             # Alternativa más robusta para PDFs tabulares
+
+# ── Manejo y análisis de datos
+pandas==2.2.2
+openpyxl==3.1.2                # Soporte .xlsx para reportes en Excel
+
+# ── Notificaciones por email (SendGrid)
+sendgrid==6.11.0                       # API de envío de email transaccional
+
+# ── Notificaciones por WhatsApp (Twilio)
+twilio==9.1.1
+
+# ── Utilidades de sistema y fecha
+python-dateutil==2.9.0
+pytz==2024.1                   # Manejo de timezone Argentina (America/Argentina/Buenos_Aires)
+
+# ── Variables de entorno locales (para desarrollo local, NO en producción)
+python-dotenv==1.0.1
+
+# ── Logging enriquecido
+colorlog==6.8.2
+
+# ── Dashboard web (Streamlit)
+streamlit>=1.35.0
+pandas>=2.0.0                  # Requerido por las tablas del dashboard

@@ -1,0 +1,257 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# INPI ARGENTINA — Vigilancia Semanal de Marcas
+# .github/workflows/inpi_monitor.yml
+#
+# CÓMO FUNCIONA:
+#   1. GitHub ejecuta este workflow todos los lunes a las 11:00 UTC
+#      (= 08:00 AM Argentina, horario Buenos Aires GMT-3)
+#   2. Instala Python + dependencias + navegador Chromium
+#   3. Corre el scraper del INPI
+#   4. Si hay alertas, envía email y/o WhatsApp
+#   5. Hace commit automático del log de procesamiento al repositorio
+#   6. Sube el reporte como artefacto descargable por 90 días
+#
+# COSTO: $0 — GitHub Free otorga 2,000 minutos/mes para repos privados.
+#         Esta ejecución demora ~4 minutos. 52 semanas = 208 minutos/año.
+# ══════════════════════════════════════════════════════════════════════════════
+
+name: "🔍 INPI — Vigilancia Semanal de Marcas"
+
+on:
+  # ── Ejecución automática semanal
+  schedule:
+    # Cron syntax: minuto hora día-mes mes día-semana
+    # "0 11 * * 1" = todos los lunes a las 11:00 UTC = 08:00 Argentina
+    - cron: "0 11 * * 1"
+
+  # ── Ejecución manual desde GitHub (botón "Run workflow" en la UI)
+  # Útil para correr ante una sospecha urgente sin esperar al lunes
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "Modo de ejecución"
+        required: true
+        default: "real"
+        type: choice
+        options:
+          - real    # Scraping real del portal INPI
+          - demo    # Datos simulados (para testing)
+      notificar:
+        description: "Enviar notificaciones por email/WhatsApp"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+# ── Permisos necesarios para el commit automático
+permissions:
+  contents: write   # Permite hacer git push al repositorio
+
+jobs:
+  vigilancia:
+    name: "Monitoreo INPI"
+    runs-on: ubuntu-latest   # Servidor Ubuntu gratuito de GitHub
+
+    # Timeout máximo: 15 minutos. Si tarda más, algo falló.
+    timeout-minutes: 15
+
+    steps:
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 1: Descargar el código del repositorio
+      # ────────────────────────────────────────────────────────────
+      - name: "📥 Checkout del repositorio"
+        uses: actions/checkout@v4
+        with:
+          # Necesario para que git push funcione correctamente
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 2: Configurar Python
+      # ────────────────────────────────────────────────────────────
+      - name: "🐍 Configurar Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          # Cache de pip: acelera ejecuciones futuras ~60 segundos
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 3: Instalar dependencias Python
+      # ────────────────────────────────────────────────────────────
+      - name: "📦 Instalar dependencias"
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 4: Instalar Chromium para Playwright
+      # Esto es lo que permite que el script navegue el portal INPI
+      # ────────────────────────────────────────────────────────────
+      - name: "🌐 Instalar Chromium (Playwright)"
+        run: |
+          playwright install chromium
+          playwright install-deps chromium
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 5: Configurar variables de entorno desde Secrets
+      # Los secrets se configuran en GitHub → Settings → Secrets
+      # Nunca aparecen en los logs ni en el código
+      # ────────────────────────────────────────────────────────────
+      - name: "🔐 Configurar variables de entorno"
+        run: |
+          # Crear archivo .env para que el script lo lea con python-dotenv
+          # Los valores vienen de GitHub Secrets (encriptados)
+          # NOTA: SendGrid requiere SENDGRID_API_KEY + EMAIL_REMITENTE + EMAIL_DESTINATARIO
+          cat > .env << EOF
+          SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
+          EMAIL_REMITENTE=${{ secrets.EMAIL_REMITENTE }}
+          EMAIL_DESTINATARIO=${{ secrets.EMAIL_DESTINATARIO }}
+          TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_WHATSAPP_FROM=${{ secrets.TWILIO_WHATSAPP_FROM }}
+          TWILIO_WHATSAPP_TO=${{ secrets.TWILIO_WHATSAPP_TO }}
+          UMBRAL_SIMILITUD=${{ secrets.UMBRAL_SIMILITUD || '75' }}
+          EOF
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 6: Ejecutar el script de vigilancia
+      # ────────────────────────────────────────────────────────────
+      - name: "🔍 Ejecutar vigilancia INPI"
+        id: vigilancia
+        run: |
+          # Determinar modo según cómo se disparó el workflow
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MODO="${{ github.event.inputs.modo }}"
+            NOTIFICAR="${{ github.event.inputs.notificar }}"
+          else
+            # Ejecución automática semanal: siempre real y con notificaciones
+            MODO="real"
+            NOTIFICAR="true"
+          fi
+
+          echo "Ejecutando en modo: $MODO"
+          echo "Notificaciones: $NOTIFICAR"
+          echo "Fecha/hora Argentina: $(TZ='America/Argentina/Buenos_Aires' date)"
+
+          # Correr el script principal
+          python inpi_vigilancia_marcas.py \
+            --modo $MODO \
+            --notificar $NOTIFICAR
+
+          # Guardar el código de salida para el siguiente paso
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+        env:
+          # Hacer disponibles los secrets directamente como variables de entorno
+          # (redundante con el .env, pero más seguro — doble cobertura)
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          EMAIL_REMITENTE: ${{ secrets.EMAIL_REMITENTE }}
+          EMAIL_DESTINATARIO: ${{ secrets.EMAIL_DESTINATARIO }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 7: Commit automático del log de procesados
+      # Guarda en el repo qué expedientes ya fueron procesados
+      # para no generar alertas duplicadas la semana siguiente
+      # ────────────────────────────────────────────────────────────
+      - name: "💾 Commit del log de procesados"
+        run: |
+          # Configurar identidad git para el commit automático
+          git config user.name  "INPI Monitor Bot"
+          git config user.email "bot@inpi-monitor.github"
+
+          # Agregar solo los archivos de tracking (no reportes ni logs de texto)
+          git add procesados_historico.json
+          git add inpi_monitor.log || true   # || true para no fallar si no existe
+
+          # Verificar si hay cambios antes de commitear
+          if git diff --staged --quiet; then
+            echo "Sin cambios en el log de procesados. No se genera commit."
+          else
+            FECHA=$(TZ='America/Argentina/Buenos_Aires' date '+%d/%m/%Y %H:%M')
+            git commit -m "🤖 Auto-update: Log procesados INPI — $FECHA [skip ci]"
+            git push origin main
+            echo "✅ Log actualizado y subido al repositorio."
+          fi
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 8: Subir reporte como artefacto descargable
+      # Disponible 90 días en GitHub → Actions → tu ejecución → Artifacts
+      # ────────────────────────────────────────────────────────────
+      - name: "📄 Subir reporte como artefacto"
+        uses: actions/upload-artifact@v4
+        if: always()   # Subir incluso si hubo errores (para diagnóstico)
+        with:
+          name: "reporte-inpi-${{ github.run_id }}"
+          path: |
+            reporte_alertas_*.txt
+            alertas_*.json
+            inpi_monitor.log
+          retention-days: 90
+
+      # ────────────────────────────────────────────────────────────
+      # PASO 9: Notificar si el workflow FALLÓ (monitoreo del monitor)
+      # ────────────────────────────────────────────────────────────
+      - name: "🚨 Notificar fallo del workflow"
+        if: failure()
+        run: |
+          python - << 'PYTHON_SCRIPT'
+          import os
+          import smtplib
+          from email.mime.text import MIMEText
+          from datetime import datetime
+
+          # SendGrid SMTP relay: mismas credenciales que el script principal
+          api_key    = os.environ.get("SENDGRID_API_KEY")
+          remitente  = os.environ.get("EMAIL_REMITENTE")
+          destinatario = os.environ.get("EMAIL_DESTINATARIO", remitente)
+
+          if not api_key or not remitente:
+              print("No hay credenciales SendGrid configuradas. Omitiendo notificación de fallo.")
+              exit(0)
+
+          cuerpo = f"""
+          ⚠️ ALERTA OPERATIVA — INPI Monitor / Argonut
+
+          El workflow de vigilancia semanal FALLÓ el {datetime.now().strftime('%d/%m/%Y a las %H:%M')}.
+
+          Esto NO significa que haya nuevas marcas conflictivas.
+          Significa que el sistema no pudo ejecutarse correctamente.
+
+          ACCIÓN REQUERIDA: Revisar los logs en:
+          https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
+
+          Causas comunes:
+          - El portal del INPI cambió su estructura (requiere actualizar selectores CSS)
+          - Error de autenticación en SendGrid o Twilio
+          - Timeout en el scraping
+
+          — Sistema Automático Argonut / INPI Monitor
+          """
+
+          msg = MIMEText(cuerpo, "plain", "utf-8")
+          msg["Subject"] = "⚠️ FALLO — Vigilancia INPI no ejecutada esta semana"
+          msg["From"]    = remitente
+          msg["To"]      = destinatario
+
+          try:
+              # SendGrid SMTP relay: usuario siempre es "apikey", password es tu API key
+              with smtplib.SMTP("smtp.sendgrid.net", 587) as server:
+                  server.ehlo()
+                  server.starttls()
+                  server.login("apikey", api_key)
+                  server.send_message(msg)
+              print("Notificación de fallo enviada via SendGrid SMTP.")
+          except Exception as e:
+              print(f"No se pudo enviar notificación de fallo: {e}")
+          PYTHON_SCRIPT
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          EMAIL_REMITENTE: ${{ secrets.EMAIL_REMITENTE }}
+          EMAIL_DESTINATARIO: ${{ secrets.EMAIL_DESTINATARIO }}
