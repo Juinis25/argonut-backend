@@ -42,7 +42,12 @@ class Settings(BaseSettings):
 
     # ── Monitor INPI
     UMBRAL_SIMILITUD: int = 75
-    INPI_URL: str = "https://portaltramites.inpi.gob.ar/marcas/busqueda"
+    # URL de sesión (GET para obtener cookies del portal)
+    INPI_SESION_URL: str = "https://portaltramites.inpi.gob.ar/marcasconsultas/busqueda/?Cod_Funcion=NQA0ADE"
+    # Endpoint JSON real (descubierto por ingeniería inversa del portal)
+    INPI_API_URL: str = "https://portaltramites.inpi.gob.ar/MarcasConsultas/GrillaMarcasAvanzada"
+    # Alias legacy (deprecado — no usar en código nuevo)
+    INPI_URL: str = "https://portaltramites.inpi.gob.ar/MarcasConsultas/GrillaMarcasAvanzada"
 
     # ── Email from (usados por email_service.py)
     SMTP_FROM: str = "alertas@argonut.ar"

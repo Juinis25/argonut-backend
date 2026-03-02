@@ -37,17 +37,27 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Eventos de ciclo de vida de la aplicación."""
+    import os
+
     # ── Startup ────────────────────────────────────────────────────────────
     create_tables()  # Crea tablas si no existen (idempotente)
 
-    from services.scheduler import iniciar_scheduler
-    iniciar_scheduler()
+    # El scheduler sólo arranca en el worker 0 de uvicorn (evita duplicación
+    # de jobs cuando se arranca con --workers N > 1).
+    # WORKER_ID=0 lo setea el Procfile/railway.toml via gunicorn-compatible env.
+    # Con uvicorn directamente no hay worker ID, así que usamos la variable de
+    # entorno SCHEDULER_ENABLED para controlar esto en producción si hace falta.
+    scheduler_enabled = os.getenv("SCHEDULER_ENABLED", "true").lower() == "true"
+    if scheduler_enabled:
+        from services.scheduler import iniciar_scheduler
+        iniciar_scheduler()
 
     yield
 
     # ── Shutdown ───────────────────────────────────────────────────────────
-    from services.scheduler import detener_scheduler
-    detener_scheduler()
+    if scheduler_enabled:
+        from services.scheduler import detener_scheduler
+        detener_scheduler()
 
 
 # ─────────────────────────────────────────────────────────────────────────────

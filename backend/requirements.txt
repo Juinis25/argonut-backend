@@ -20,8 +20,9 @@ email-validator==2.1.1
 fuzzywuzzy==0.18.0
 python-Levenshtein==0.25.1          # Acelera fuzzywuzzy x10
 
-# ── Scraping INPI ─────────────────────────────────────────────────────────────
-playwright==1.43.0
+# ── HTTP client + retry + cache (motor INPI httpx) ────────────────────────────
+tenacity==8.3.0                     # Retry con backoff exponencial
+cachetools==5.3.3                   # TTLCache para resultados INPI (24h)
 
 # ── Scheduler ─────────────────────────────────────────────────────────────────
 APScheduler==3.10.4
@@ -32,4 +33,4 @@ sendgrid==6.11.0                    # SendGrid (opcional; fallback a SMTP si no 
 
 # ── Utilidades ────────────────────────────────────────────────────────────────
 python-multipart==0.0.9             # Form data support
-httpx==0.27.0                       # HTTP async client (tests, webhooks)
+httpx==0.27.0                       # HTTP async client — scraping INPI + tests

@@ -1,0 +1,45 @@
+# ── Entorno / Secretos ────────────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+*.env
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# ── Virtual env ───────────────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Tests / Coverage ──────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ── IDEs ─────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+
+# ── Playwright (ya no se usa, pero por si queda cache) ───────────────────────
+playwright-report/
+test-results/
+
+# ── Alembic autogenerados (no committed) ─────────────────────────────────────
+migrations/versions/__pycache__/
