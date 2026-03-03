@@ -10,6 +10,7 @@ alembic==1.13.1
 # ── Auth / Seguridad ──────────────────────────────────────────────────────────
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+bcrypt==4.0.1                       # Pin: passlib 1.7.4 incompatible con bcrypt>=4.1.x
 
 # ── Validación / Schemas ──────────────────────────────────────────────────────
 pydantic==2.7.1
