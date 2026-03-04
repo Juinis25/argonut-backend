@@ -110,6 +110,7 @@ class AlertaOut(BaseModel):
     id:                  int
     marca_id:            int
     marca_nombre:        Optional[str] = None   # populated from join
+    clase:               Optional[int] = None   # populated from join (marca.clase)
     solicitud_nombre:    str
     expediente:          Optional[str]
     fecha_solicitud:     Optional[str]

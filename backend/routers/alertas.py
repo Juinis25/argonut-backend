@@ -30,9 +30,10 @@ def get_alerta_or_404(alerta_id: int, user: User, db: Session) -> Alerta:
 
 
 def _enrich(alerta: Alerta) -> dict:
-    """Agrega marca_nombre al dict de salida."""
+    """Agrega marca_nombre y clase (desde la marca vigilada) al dict de salida."""
     d = {c.name: getattr(alerta, c.name) for c in alerta.__table__.columns}
     d["marca_nombre"] = alerta.marca.nombre if alerta.marca else None
+    d["clase"] = alerta.marca.clase if alerta.marca else None
     return d
 
 
