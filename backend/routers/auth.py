@@ -17,6 +17,7 @@ from schemas import UserRegister, UserLogin, TokenResponse, RefreshRequest, User
 from core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
 from core.config import get_settings
 from routers.deps import get_current_user
+from services.email_service import enviar_email_bienvenida
 
 settings = get_settings()
 router   = APIRouter(prefix="/auth", tags=["auth"])
@@ -39,6 +40,13 @@ def register(payload: UserRegister, db: Session = Depends(get_db)):
     db.add(user)
     db.commit()
     db.refresh(user)
+
+    # Bienvenida por email — no bloquea el registro si falla
+    try:
+        enviar_email_bienvenida(user)
+    except Exception:
+        pass
+
     return user
 
 

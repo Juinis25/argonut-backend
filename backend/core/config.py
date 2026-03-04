@@ -24,15 +24,15 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
     # ── Email (Gmail SMTP o SendGrid)
-    EMAIL_BACKEND: str = "smtp"          # "smtp" | "sendgrid"
+    # Para SMTP: setear SMTP_HOST, SMTP_USER, SMTP_PASSWORD, SMTP_FROM
+    # Para SendGrid: setear SENDGRID_API_KEY, SENDGRID_FROM_EMAIL
+    EMAIL_BACKEND: str = "smtp"          # "smtp" | "sendgrid" (informativo; selección es automática)
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 465
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""              # Contraseña de aplicación Google
-    EMAIL_FROM: str = "alertas@argonut.ar"
-    EMAIL_FROM_NAME: str = "Argonut — Vigilancia de Marcas"
 
-    # SendGrid (alternativa)
+    # SendGrid (prioridad si SENDGRID_API_KEY está seteado)
     SENDGRID_API_KEY: str = ""
 
     # ── WhatsApp (Twilio)

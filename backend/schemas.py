@@ -153,7 +153,7 @@ class DashboardStats(BaseModel):
 
 class MonitorRunRequest(BaseModel):
     modo:      str = Field(default="demo", pattern="^(demo|real)$")
-    notificar: bool = False
+    notificar: bool = True   # default ON — alineado con frontend
 
 
 class MonitorRunOut(BaseModel):

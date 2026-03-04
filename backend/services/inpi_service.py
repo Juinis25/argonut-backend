@@ -40,7 +40,7 @@ from tenacity import (
     before_sleep_log,
 )
 
-from models import Alerta, ExpedienteProcesado, Marca, NivelAlerta, User
+from models import Alerta, ExpedienteProcesado, Marca, NivelAlerta, PlanEnum, User
 
 log = logging.getLogger(__name__)
 
@@ -473,7 +473,10 @@ async def ejecutar_para_usuario_async(
         try:
             from services.email_service import enviar_resumen_alertas
             user: Optional[User] = db.query(User).filter(User.id == user_id).first()
-            if user and getattr(user, "email_notif", False) and user.email:
+            if (user
+                    and getattr(user, "email_notif", False)
+                    and user.email
+                    and user.plan != PlanEnum.free):
                 pendientes = db.query(Alerta).filter(
                     Alerta.user_id    == user_id,
                     Alerta.notificada == False,

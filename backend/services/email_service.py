@@ -100,7 +100,7 @@ def _html_resumen(user_nombre: str, alertas: list) -> str:
       Las alertas críticas (≥90%) requieren acción dentro de los 30 días hábiles
       desde la publicación en el Boletín de Marcas del INPI (Ley 22.362, Art. 12).<br><br>
       Este email fue enviado automáticamente por Argonut.
-      <a href="https://argonut.ar/configuracion" style="color:#999">Gestionar notificaciones</a>
+      <a href="https://argonut.ar/dashboard" style="color:#999">Gestionar notificaciones</a>
     </p>
   </div>
 </body>
